@@ -90,16 +90,18 @@ python main.py
 
 1. Start Menu
 Enter:
-- Rows
-- Columns
-- Maximum obstacles
+- Number of Rows
+- Number of Columns
+- Number of Obstacles
 
 2. Editor Mode
 Tools available:
-- Set Start/Finish — place two “A” tiles
-- Add Obstacle — place “X” tiles
+- 
+- Set Start/Finish — place two green tiles that indicates start and finish
+- Add Obstacle — place red tiles that indicates obstacle(s)
 - Undo/Redo — revert or redo actions
 - Solve — run the DFS solver
+- Reset — resetting the grid to initial state 
 If the solver finds a valid path, it is visualized automatically.
 
 ---
