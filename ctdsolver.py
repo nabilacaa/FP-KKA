@@ -18,25 +18,25 @@ pygame.display.set_caption("SINGLE-LINE FILL PUZZLE SOLVER")
 FONT = pygame.font.SysFont("arial", 24)
 SMALL = pygame.font.SysFont("arial", 20)
 
-BG_HOME = pygame.image.load("bg_home.png")
+BG_HOME = pygame.image.load("image/bg_home.png")
 BG_HOME = pygame.transform.scale(BG_HOME, (WIDTH, HEIGHT))
 
-BG_GRID = pygame.image.load("bg_puzzle.png")
+BG_GRID = pygame.image.load("image/bg_puzzle.png")
 BG_GRID = pygame.transform.scale(BG_GRID, (WIDTH, HEIGHT))
 
-IMG_BTN_CREATE = pygame.image.load("btn_create.png")
+IMG_BTN_CREATE = pygame.image.load("image/btn_create.png")
 
-IMG_ROWS= pygame.image.load("text_rows.png")
-IMG_COLS = pygame.image.load("text_columns.png")
-IMG_OBS = pygame.image.load("text_obs.png")
+IMG_ROWS= pygame.image.load("image/text_rows.png")
+IMG_COLS = pygame.image.load("image/text_columns.png")
+IMG_OBS = pygame.image.load("image/text_obs.png")
 
-IMG_HOME = pygame.image.load("btn_home.png")
-IMG_SETSF = pygame.image.load("btn_setsf.png")
-IMG_SETOBS = pygame.image.load("btn_setobs.png")
-IMG_UNDO = pygame.image.load("btn_undo.png")
-IMG_REDO = pygame.image.load("btn_redo.png")
-IMG_SOLVE = pygame.image.load("btn_solve.png")
-IMG_RESET = pygame.image.load("btn_reset.png")
+IMG_HOME = pygame.image.load("image/btn_home.png")
+IMG_SETSF = pygame.image.load("image/btn_setsf.png")
+IMG_SETOBS = pygame.image.load("image/btn_setobs.png")
+IMG_UNDO = pygame.image.load("image/btn_undo.png")
+IMG_REDO = pygame.image.load("image/btn_redo.png")
+IMG_SOLVE = pygame.image.load("image/btn_solve.png")
+IMG_RESET = pygame.image.load("image/btn_reset.png")
 
 BTN_W, BTN_H = 220, 37
 def scale(img):
