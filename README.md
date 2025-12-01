@@ -125,6 +125,7 @@ Grid uses:
 - Grey Square → empty
 - Red Square → obstacle
 - Green Square → start/finish
+
 The solver tries to visit all Grey Square and Green Square exactly once.
 
 ---
