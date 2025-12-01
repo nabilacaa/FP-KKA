@@ -62,11 +62,16 @@ This application uses **Depth-First Search (DFS)** as its primary search algorit
 
 Home
 
-<img width="2060" height="1208" alt="image" src="https://github.com/user-attachments/assets/99408182-afd7-4f3c-978f-64bbe6a52ee2" />
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/99408182-afd7-4f3c-978f-64bbe6a52ee2" />
 
 Puzzle Solver
 
-<img width="2049" height="1198" alt="image" src="https://github.com/user-attachments/assets/d6025ce6-e48f-47a0-b230-b87245eca4da" />
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/d6025ce6-e48f-47a0-b230-b87245eca4da" />
+
+Error Popup
+
+<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/f37efe9c-d69b-4cf0-89a4-110ed4382230" />
+
 
 ---
 
