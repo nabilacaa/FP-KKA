@@ -1,6 +1,6 @@
 # FP-KKA
 
-## SINGLE-LINE FILL PUZZLE SOLVER  
+## CONNECT THE DOTS PUZZLE SOLVER  
 A path-finding puzzle solver built with **Python + Pygame**, implementing **uninformed search (DFS)** with a **degree heuristic** to efficiently find a single continuous path connecting two points without revisiting any cell.
 
 ---
@@ -45,7 +45,7 @@ This application uses **Depth-First Search (DFS)** as its primary search algorit
   - Click to place Start/Finish  
   - Click to place obstacles  
 
-- ↩️ **Undo & Redo Functionality**
+- ↩️ **Undo, Redo, & Reset Functionality**
 
 - 🧠 **Automatic Solver**
   - DFS with heuristics  
@@ -59,7 +59,14 @@ This application uses **Depth-First Search (DFS)** as its primary search algorit
 ---
 
 ## 📸 Preview
-(Add a screenshot or GIF here if desired.)
+
+Home
+
+<img width="2060" height="1208" alt="image" src="https://github.com/user-attachments/assets/99408182-afd7-4f3c-978f-64bbe6a52ee2" />
+
+Puzzle Solver
+
+<img width="2049" height="1198" alt="image" src="https://github.com/user-attachments/assets/d6025ce6-e48f-47a0-b230-b87245eca4da" />
 
 ---
 
@@ -96,12 +103,13 @@ Enter:
 
 2. Editor Mode
 Tools available:
-- 
+ 
 - Set Start/Finish — place two green tiles that indicates start and finish
 - Add Obstacle — place red tiles that indicates obstacle(s)
 - Undo/Redo — revert or redo actions
 - Solve — run the DFS solver
-- Reset — resetting the grid to initial state 
+- Reset — resetting the grid to initial state
+
 If the solver finds a valid path, it is visualized automatically.
 
 ---
