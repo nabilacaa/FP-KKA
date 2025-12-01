@@ -1,3 +1,7 @@
+# =============================
+# Made by Shab and Neb
+# =============================
+
 import pygame
 import sys
 sys.setrecursionlimit(10**7)
