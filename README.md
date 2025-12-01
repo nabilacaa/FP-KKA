@@ -122,10 +122,10 @@ If the solver finds a valid path, it is visualized automatically.
 ## 🧩 Grid Format
 
 Grid uses:
-- "0" → empty
-- "X" → obstacle
-- "A" → start/finish
-The solver tries to visit all "0" and "A" exactly once.
+- Grey Square → empty
+- Red Square → obstacle
+- Green Square → start/finish
+The solver tries to visit all Grey Square and Green Square exactly once.
 
 ---
 
