@@ -108,7 +108,8 @@ Enter:
 
 2. Editor Mode
 Tools available:
- 
+
+- Home — back to start menu
 - Set Start/Finish — place two green tiles that indicates start and finish
 - Add Obstacle — place red tiles that indicates obstacle(s)
 - Undo/Redo — revert or redo actions
