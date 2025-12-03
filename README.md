@@ -133,4 +133,4 @@ The solver tries to visit all Grey Square and Green Square exactly once.
 
 ## 👤 Author
 
-Developed by Shab and Neb for the Artificial Intelligence Concepts course final project.
+Developed by Shab (Shabrina Amalia Safaana - 5025241157) and Neb (Nabila Shafa Rahayu - 5025241150) for the Artificial Intelligence Concepts course final project.
