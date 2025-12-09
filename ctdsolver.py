@@ -4,8 +4,10 @@
 
 import pygame
 import sys
-sys.setrecursionlimit(10**7)
+import threading
+import time
 
+sys.setrecursionlimit(10**7)
 pygame.init()
 
 # =============================
@@ -26,7 +28,7 @@ BG_GRID = pygame.transform.scale(BG_GRID, (WIDTH, HEIGHT))
 
 IMG_BTN_CREATE = pygame.image.load("image/btn_create.png")
 
-IMG_ROWS= pygame.image.load("image/text_rows.png")
+IMG_ROWS = pygame.image.load("image/text_rows.png")
 IMG_COLS = pygame.image.load("image/text_columns.png")
 IMG_OBS = pygame.image.load("image/text_obs.png")
 
@@ -39,8 +41,11 @@ IMG_SOLVE = pygame.image.load("image/btn_solve.png")
 IMG_RESET = pygame.image.load("image/btn_reset.png")
 
 BTN_W, BTN_H = 220, 37
+
+
 def scale(img):
     return pygame.transform.scale(img, (BTN_W, BTN_H))
+
 
 IMG_HOME = scale(IMG_HOME)
 IMG_SETSF = scale(IMG_SETSF)
@@ -123,7 +128,12 @@ def start_menu():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if create_button_rect.collidepoint(event.pos):
                     if row_box.text and col_box.text:
-                        return int(row_box.text), int(col_box.text)
+                        r = int(row_box.text)
+                        c = int(col_box.text)
+                        if 1 <= r <= 10 and 1 <= c <= 10:
+                            return r, c
+                        else:
+                            show_alert("Rows and Columns must be between 1 and 10.")
 
         pygame.display.update()
 
@@ -137,7 +147,7 @@ def find_points(g):
     for r in range(R):
         for c in range(C):
             if g[r][c] == "A":
-                pts.append((r,c))
+                pts.append((r, c))
     if len(pts) != 2:
         return None, None
     return pts[0], pts[1]
@@ -145,55 +155,132 @@ def find_points(g):
 
 def dfs_solver(grid):
     R, C = len(grid), len(grid[0])
+
     start, finish = find_points(grid)
     if not start or not finish:
         return None
 
-    dirs = [(1,0),(-1,0),(0,1),(0,-1)]
+    dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
-    target_cells = [(r,c) for r in range(R) for c in range(C)
-                    if grid[r][c] in ("0","A")]
+    def has_obstacle():
+        for r in range(R):
+            for c in range(C):
+                if grid[r][c] == "X":
+                    return True
+        return False
+
+    def color(r, c):
+        return (r + c) & 1
+
+    # ---------- (A) FAST PATH WHEN NO OBSTACLES ----------
+    def try_construct_full_grid_path():
+        total = R * C
+        if total % 2 == 0:
+            if color(*start) == color(*finish):
+                return None
+        else:
+            if color(*start) != color(*finish):
+                return None
+
+        base = []
+        for r in range(R):
+            if r % 2 == 0:
+                for c in range(C):
+                    base.append((r, c))
+            else:
+                for c in range(C - 1, -1, -1):
+                    base.append((r, c))
+
+        def apply_transform(path, flip_h=False, flip_v=False):
+            out = []
+            for (r, c) in path:
+                if flip_h:
+                    c = C - 1 - c
+                if flip_v:
+                    r = R - 1 - r
+                out.append((r, c))
+            return out
+
+        for flip_h in (False, True):
+            for flip_v in (False, True):
+                p = apply_transform(base, flip_h=flip_h, flip_v=flip_v)
+                if p[0] == start and p[-1] == finish:
+                    return p
+                if p[-1] == start and p[0] == finish:
+                    return list(reversed(p))
+
+        return None
+
+    if not has_obstacle():
+        fast = try_construct_full_grid_path()
+        if fast is not None:
+            return fast
+
+    # ---------- (B) BACKTRACKING (PRUNING + STEP CAP) ----------
+    target_cells = [(r, c) for r in range(R) for c in range(C) if grid[r][c] in ("0", "A")]
     need = len(target_cells)
 
     visited = set()
     path = []
     solution = None
 
-    def degree(r,c):
+    MAX_STEPS = 2_000_000
+    steps = 0
+
+    def degree(r, c):
         cnt = 0
-        for dr,dc in dirs:
-            nr, nc = r+dr, c+dc
+        for dr, dc in dirs:
+            nr, nc = r + dr, c + dc
             if 0 <= nr < R and 0 <= nc < C:
-                if grid[nr][nc] != "X" and (nr,nc) not in visited:
+                if grid[nr][nc] != "X" and (nr, nc) not in visited:
                     cnt += 1
         return cnt
 
-    def dfs(r,c):
-        nonlocal solution
+    def dead_end_prune():
+        for rr in range(R):
+            for cc in range(C):
+                if grid[rr][cc] != "X" and (rr, cc) not in visited and (rr, cc) != finish:
+                    d = 0
+                    for dr, dc in dirs:
+                        nr, nc = rr + dr, cc + dc
+                        if 0 <= nr < R and 0 <= nc < C:
+                            if grid[nr][nc] != "X" and (nr, nc) not in visited:
+                                d += 1
+                    if d == 0:
+                        return True
+        return False
+
+    def dfs(r, c):
+        nonlocal solution, steps
         if solution is not None:
             return
 
-        if (r,c) == finish and len(path) == need:
+        steps += 1
+        if steps > MAX_STEPS:
+            return
+
+        if (r, c) == finish and len(path) == need:
             solution = path[:]
             return
 
+        if dead_end_prune():
+            return
+
         moves = []
-        for dr,dc in dirs:
-            nr, nc = r+dr, c+dc
+        for dr, dc in dirs:
+            nr, nc = r + dr, c + dc
             if 0 <= nr < R and 0 <= nc < C:
-                if grid[nr][nc] != "X" and (nr,nc) not in visited:
-                    moves.append((degree(nr,nc), nr, nc))
+                if grid[nr][nc] != "X" and (nr, nc) not in visited:
+                    moves.append((degree(nr, nc), nr, nc))
 
         moves.sort()
 
         for _, nr, nc in moves:
-            visited.add((nr,nc))
-            path.append((nr,nc))
-
-            dfs(nr,nc)
-
+            visited.add((nr, nc))
+            path.append((nr, nc))
+            dfs(nr, nc)
             path.pop()
-            visited.remove((nr,nc))
+            visited.remove((nr, nc))
 
     visited.add(start)
     path.append(start)
@@ -208,7 +295,7 @@ def dfs_solver(grid):
 def draw_grid(rows, cols, cs, grid, ox, oy):
     for r in range(rows):
         for c in range(cols):
-            rect = pygame.Rect(c*cs + ox, r*cs + oy, cs, cs)
+            rect = pygame.Rect(c * cs + ox, r * cs + oy, cs, cs)
 
             if grid[r][c] == "X":
                 pygame.draw.rect(SCREEN, COLOR_OBS, rect)
@@ -262,7 +349,6 @@ def draw_path(path, cs, ox, oy):
 
     points.append((xf, yf))
 
-    # Finally draw the path
     pygame.draw.lines(SCREEN, (0, 70, 255), False, points, 10)
 
 
@@ -273,12 +359,7 @@ def show_alert(message):
     popup_width, popup_height = 400, 200
     popup = pygame.Surface((popup_width, popup_height))
 
-    ok_rect = pygame.Rect(
-        popup_width//2 - 50,
-        120,
-        100,
-        40
-    )
+    ok_rect = pygame.Rect(popup_width // 2 - 50, 120, 100, 40)
 
     running = True
     while running:
@@ -290,50 +371,78 @@ def show_alert(message):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mx, my = event.pos
 
-                rel_x = mx - (WIDTH//2 - popup_width//2)
-                rel_y = my - (HEIGHT//2 - popup_height//2)
+                rel_x = mx - (WIDTH // 2 - popup_width // 2)
+                rel_y = my - (HEIGHT // 2 - popup_height // 2)
 
                 if ok_rect.collidepoint((rel_x, rel_y)):
-                    running = False 
+                    running = False
 
         popup.fill((40, 40, 40))
         pygame.draw.rect(popup, (200, 50, 50), (0, 0, popup_width, popup_height), 4)
 
-        txt = FONT.render(message, True, (255,255,255))
-        popup.blit(txt, (popup_width//2 - txt.get_width()//2, 50))
+        txt = FONT.render(message, True, (255, 255, 255))
+        popup.blit(txt, (popup_width // 2 - txt.get_width() // 2, 50))
 
-        pygame.draw.rect(popup, (100,200,100), ok_rect, border_radius=8)
-        popup.blit(FONT.render("OK", True, (0,0,0)),
-                   (ok_rect.x + 30, ok_rect.y + 5))
+        pygame.draw.rect(popup, (100, 200, 100), ok_rect, border_radius=8)
+        popup.blit(FONT.render("OK", True, (0, 0, 0)), (ok_rect.x + 30, ok_rect.y + 5))
 
-        SCREEN.blit(
-            popup,
-            (WIDTH//2 - popup_width//2,
-             HEIGHT//2 - popup_height//2)
-        )
-
+        SCREEN.blit(popup, (WIDTH // 2 - popup_width // 2, HEIGHT // 2 - popup_height // 2))
         pygame.display.update()
 
 
-# -----------------------
+# =============================
 # HISTORY STATE HELPER (UNDO/REDO)
-# -----------------------
+# =============================
 def copy_grid(g):
     return [row[:] for row in g]
+
 
 def make_snapshot(grid, start, finish, obs_count):
     return {
         "grid": copy_grid(grid),
         "start": None if start is None else (start[0], start[1]),
         "finish": None if finish is None else (finish[0], finish[1]),
-        "obs": obs_count
+        "obs": obs_count,
     }
+
 
 def restore_snapshot(snap):
     g = copy_grid(snap["grid"])
     s = None if snap["start"] is None else (snap["start"][0], snap["start"][1])
     f = None if snap["finish"] is None else (snap["finish"][0], snap["finish"][1])
     return g, s, f, snap["obs"]
+
+
+# =============================
+# LOADING ANIMATION (CENTER SCREEN)
+# =============================
+loading_angle = 0
+def draw_loading_center():
+    global loading_angle
+    loading_angle = (loading_angle + 8) % 360
+
+    # dim background (so it feels like "overlay")
+    overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
+    overlay.fill((0, 0, 0, 120))
+    SCREEN.blit(overlay, (0, 0))
+
+    # text
+    txt = FONT.render("Solving...", True, (255, 255, 255))
+    SCREEN.blit(txt, (WIDTH // 2 - txt.get_width() // 2, HEIGHT // 2 - 60))
+
+    # spinner
+    center = (WIDTH // 2, HEIGHT // 2 + 10)
+    radius = 34
+
+    # outer ring
+    pygame.draw.circle(SCREEN, (255, 255, 255), center, radius, 3)
+
+    # moving dot (simple)
+    vec = pygame.math.Vector2(1, 0).rotate(loading_angle)
+    end_x = center[0] + int(vec.x * (radius - 6))
+    end_y = center[1] + int(vec.y * (radius - 6))
+    pygame.draw.circle(SCREEN, (0, 210, 255), (end_x, end_y), 7)
+
 
 # =============================
 # MAIN GRID EDITOR
@@ -348,7 +457,7 @@ def main_editor(rows, cols):
     grid_h = rows * cs
 
     grid_offset_x = 0
-    grid_offset_y = (HEIGHT - grid_h) // 2    
+    grid_offset_y = (HEIGHT - grid_h) // 2
 
     mode = "none"
     obs_count = 0
@@ -359,7 +468,7 @@ def main_editor(rows, cols):
     redo = []
 
     BTN_X = WIDTH - BTN_W - 100
-    UNDO_X = WIDTH - (UNDO_W * 2) - 110  
+    UNDO_X = WIDTH - (UNDO_W * 2) - 110
     REDO_X = WIDTH - UNDO_W - 100
 
     buttons = {
@@ -375,8 +484,15 @@ def main_editor(rows, cols):
     path = None
     solved = False
 
+    # ---- new: background solving state ----
+    solving = False
+    solve_thread = None
+
+    # these will be filled by the solver thread
+    solve_result = {"path": None, "solved": False, "done": False}
+
     while True:
-        SCREEN.blit(BG_GRID, (0,0))
+        SCREEN.blit(BG_GRID, (0, 0))
 
         draw_grid(rows, cols, cs, grid, grid_offset_x, grid_offset_y)
 
@@ -394,17 +510,35 @@ def main_editor(rows, cols):
         if solved and path:
             draw_path(path, cs, grid_offset_x, grid_offset_y)
 
+        # ---- if solver thread finished, publish result once ----
+        if not solving and solve_result.get("done", False):
+            solve_result["done"] = False
+            if solve_result["solved"] and solve_result["path"] is not None:
+                path = solve_result["path"]
+                solved = True
+            else:
+                # only show alert when we actually attempted solve and got nothing
+                show_alert("No solution found!")
+
+        # ---- draw loading overlay while solving ----
+        if solving:
+            draw_loading_center()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
 
+            # while solving, ignore interactions (except quit)
+            if solving:
+                continue
+
             if event.type == pygame.MOUSEBUTTONDOWN:
-                x,y = event.pos
+                x, y = event.pos
 
                 if (grid_offset_x <= x < grid_offset_x + grid_w and
-                    grid_offset_y <= y < grid_offset_y + grid_h):
-                    # compute r,c relative to grid
+                        grid_offset_y <= y < grid_offset_y + grid_h):
+
                     r = (y - grid_offset_y) // cs
                     c = (x - grid_offset_x) // cs
 
@@ -413,10 +547,10 @@ def main_editor(rows, cols):
 
                     if mode == "set_sf":
                         if not start and grid[r][c] == "0":
-                            start = (r,c)
+                            start = (r, c)
                             grid[r][c] = "A"
-                        elif not finish and (r,c) != start and grid[r][c] == "0":
-                            finish = (r,c)
+                        elif not finish and (r, c) != start and grid[r][c] == "0":
+                            finish = (r, c)
                             grid[r][c] = "A"
 
                     elif mode == "set_obs":
@@ -435,23 +569,36 @@ def main_editor(rows, cols):
                                 mode = "set_obs"
                             elif name == "undo":
                                 if undo:
-                                    # push current state to redo, then restore last undo
                                     redo.append(make_snapshot(grid, start, finish, obs_count))
                                     snap = undo.pop()
                                     grid, start, finish, obs_count = restore_snapshot(snap)
                             elif name == "redo":
                                 if redo:
-                                    # push current state to undo, then restore next redo
                                     undo.append(make_snapshot(grid, start, finish, obs_count))
                                     snap = redo.pop()
                                     grid, start, finish, obs_count = restore_snapshot(snap)
                             elif name == "solve":
-                                if start and finish:
-                                    path = dfs_solver(grid)
-                                    if path is None:
-                                        show_alert("No solution found!")
-                                    else:
-                                        solved = True
+                                if start and finish and not solving:
+                                    # lock UI + start background solver
+                                    solving = True
+                                    solved = False
+                                    path = None
+
+                                    # snapshot current grid to avoid race conditions
+                                    solve_grid = copy_grid(grid)
+
+                                    def solve_task():
+                                        result = dfs_solver(solve_grid)
+                                        solve_result["path"] = result
+                                        solve_result["solved"] = (result is not None)
+                                        solve_result["done"] = True
+
+                                        nonlocal solving
+                                        solving = False
+
+                                    solve_thread = threading.Thread(target=solve_task, daemon=True)
+                                    solve_thread.start()
+
                             elif name == "reset":
                                 grid = [["0" for _ in range(cols)] for _ in range(rows)]
                                 obs_count = 0
