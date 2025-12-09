@@ -98,7 +98,6 @@ def start_menu():
 
     row_box = TextBox(center_x - 100, center_y - 50, 200, 40)
     col_box = TextBox(center_x - 100, center_y + 50, 200, 40)
-    obs_box = TextBox(center_x - 100, center_y + 150, 200, 40)
 
     create_button_rect = pygame.Rect(center_x - 55, center_y + 220, 200, 60)
 
@@ -107,11 +106,9 @@ def start_menu():
 
         row_box.draw(SCREEN)
         col_box.draw(SCREEN)
-        obs_box.draw(SCREEN)
 
         SCREEN.blit(IMG_ROWS, (center_x - IMG_ROWS.get_width() // 2, 310))
         SCREEN.blit(IMG_COLS, (center_x - IMG_COLS.get_width() // 2, 410))
-        SCREEN.blit(IMG_OBS, (center_x - IMG_OBS.get_width() // 2, 510))
 
         SCREEN.blit(IMG_BTN_CREATE, (create_button_rect.x, create_button_rect.y))
 
@@ -122,12 +119,11 @@ def start_menu():
 
             row_box.handle_event(event)
             col_box.handle_event(event)
-            obs_box.handle_event(event)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if create_button_rect.collidepoint(event.pos):
-                    if row_box.text and col_box.text and obs_box.text:
-                        return int(row_box.text), int(col_box.text), int(obs_box.text)
+                    if row_box.text and col_box.text:
+                        return int(row_box.text), int(col_box.text)
 
         pygame.display.update()
 
@@ -342,7 +338,7 @@ def restore_snapshot(snap):
 # =============================
 # MAIN GRID EDITOR
 # =============================
-def main_editor(rows, cols, max_obs):
+def main_editor(rows, cols):
     grid = [["0" for _ in range(cols)] for _ in range(rows)]
 
     MAX_GRID_W = 800
@@ -392,6 +388,9 @@ def main_editor(rows, cols, max_obs):
         SCREEN.blit(IMG_SOLVE, buttons["solve"].topleft)
         SCREEN.blit(IMG_RESET, buttons["reset"].topleft)
 
+        txt = FONT.render(f"Obstacles: {obs_count}", True, (255, 255, 255))
+        SCREEN.blit(txt, (WIDTH - 300, 200))
+
         if solved and path:
             draw_path(path, cs, grid_offset_x, grid_offset_y)
 
@@ -421,7 +420,7 @@ def main_editor(rows, cols, max_obs):
                             grid[r][c] = "A"
 
                     elif mode == "set_obs":
-                        if grid[r][c] == "0" and obs_count < max_obs:
+                        if grid[r][c] == "0":
                             grid[r][c] = "X"
                             obs_count += 1
 
@@ -471,8 +470,8 @@ def main_editor(rows, cols, max_obs):
 # =============================
 def main():
     while True:
-        r, c, o = start_menu()
-        main_editor(r, c, o)
+        r, c = start_menu()
+        main_editor(r, c)
 
 
 if __name__ == "__main__":
