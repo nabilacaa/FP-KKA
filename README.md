@@ -62,16 +62,23 @@ This application uses **Depth-First Search (DFS)** as its primary search algorit
 
 Home
 
-<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/99408182-afd7-4f3c-978f-64bbe6a52ee2" />
+<img width="2047" height="1199" alt="Screenshot 2025-12-16 151149" src="https://github.com/user-attachments/assets/0c1e2a1e-f0f8-42b4-89e5-7ff68071bdfc" />
+
+Editable Grid
+
+<img width="2049" height="1198" alt="Screenshot 2025-12-16 151803" src="https://github.com/user-attachments/assets/2f55c27d-10ad-49db-8c53-498bdff343c4" />
+
+Loading Screen
+
+<img width="2049" height="1199" alt="Screenshot 2025-12-16 151248" src="https://github.com/user-attachments/assets/e1c3a224-ea60-4937-a17f-5396197dd8c1" />
 
 Puzzle Solver
 
-<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/d6025ce6-e48f-47a0-b230-b87245eca4da" />
+<img width="2047" height="1197" alt="Screenshot 2025-12-16 151847" src="https://github.com/user-attachments/assets/d38cfbfc-e30b-4d7c-a533-67428b9023a8" />
 
 Error Popup
 
-<img width="1366" height="768" alt="image" src="https://github.com/user-attachments/assets/f37efe9c-d69b-4cf0-89a4-110ed4382230" />
-
+<img width="2048" height="1199" alt="Screenshot 2025-12-16 152041" src="https://github.com/user-attachments/assets/a1db2efb-0870-40bb-b14f-e2bbd3707b68" />
 
 ---
 
@@ -104,7 +111,6 @@ python main.py
 Enter:
 - Number of Rows
 - Number of Columns
-- Number of Obstacles
 
 2. Editor Mode
 Tools available:
