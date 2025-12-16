@@ -62,23 +62,23 @@ This application uses **Depth-First Search (DFS)** as its primary search algorit
 
 Home
 
-<img width="2047" height="1199" alt="Screenshot 2025-12-16 151149" src="https://github.com/user-attachments/assets/0c1e2a1e-f0f8-42b4-89e5-7ff68071bdfc" />
+<img width="2045" height="1195" alt="Screenshot 2025-12-16 164108" src="https://github.com/user-attachments/assets/755fd014-945d-4c3b-9360-7196f4f6d404" />
 
 Editable Grid
 
-<img width="2042" height="1193" alt="Screenshot 2025-12-16 162732" src="https://github.com/user-attachments/assets/f7eab65e-d643-4fd5-a797-66571afa2bde" />
+<img width="2047" height="1196" alt="Screenshot 2025-12-16 164209" src="https://github.com/user-attachments/assets/88050704-f5e5-444d-b346-756784a2ba9f" />
 
 Loading Screen
 
-<img width="2043" height="1198" alt="Screenshot 2025-12-16 162608" src="https://github.com/user-attachments/assets/a3d2df4d-c669-49de-960c-a52467217fd7" />
+<img width="2046" height="1197" alt="Screenshot 2025-12-16 164232" src="https://github.com/user-attachments/assets/aa0df1a7-7b31-4048-974d-4c8ebaff4cc4" />
 
 Puzzle Solver
 
-<img width="2044" height="1195" alt="Screenshot 2025-12-16 162827" src="https://github.com/user-attachments/assets/c892e4c9-a58a-4319-b6eb-f86b99f05a8a" />
+<img width="2046" height="1198" alt="Screenshot 2025-12-16 164305" src="https://github.com/user-attachments/assets/aa3f514a-b2fd-4f88-904c-cd21fdc2c9b9" />
 
 Error Popup
 
-<img width="2048" height="1196" alt="Screenshot 2025-12-16 162626" src="https://github.com/user-attachments/assets/4ba363e1-b113-4033-b464-e6081718991b" />
+<img width="2045" height="1192" alt="Screenshot 2025-12-16 164249" src="https://github.com/user-attachments/assets/deb77619-460f-45c9-bacb-90968f49a024" />
 
 ---
 
