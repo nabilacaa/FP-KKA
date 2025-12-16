@@ -614,7 +614,6 @@ def main_editor(rows, cols):
 
         pygame.display.update()
 
-
 # =============================
 # MAIN
 # =============================
