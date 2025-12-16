@@ -74,7 +74,7 @@ Loading Screen
 
 Puzzle Solver
 
-<img width="2047" height="1197" alt="Screenshot 2025-12-16 151847" src="https://github.com/user-attachments/assets/d38cfbfc-e30b-4d7c-a533-67428b9023a8" />
+<img width="2046" height="1199" alt="image" src="https://github.com/user-attachments/assets/e7dd3232-3113-4418-89b3-470f708bc13e" />
 
 Error Popup
 
