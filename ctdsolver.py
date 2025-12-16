@@ -100,6 +100,8 @@ class TextBox:
 # =============================
 # CREATE MENU
 # =============================
+
+# Digunakkan untuk menampilkan menu awal untuk memasukkan jumlah baris dan kolom
 def start_menu():
     center_x = WIDTH // 2
     center_y = HEIGHT // 2
@@ -144,6 +146,10 @@ def start_menu():
 # =============================
 # DFS SOLVER
 # =============================
+
+# Mencari dua titik 'A' pada grid:
+# - Satu sebagai start
+# - Satu sebagai finish
 def find_points(g):
     pts = []
     R, C = len(g), len(g[0])
@@ -151,20 +157,28 @@ def find_points(g):
         for c in range(C):
             if g[r][c] == "A":
                 pts.append((r, c))
+
+    # Harus tepat 2 titik A, kalau tidak ya gagal
     if len(pts) != 2:
         return None, None
     return pts[0], pts[1]
 
-
+# Solver utama:
+# - Mencari path dari start ke finish
+# - Harus melewati semua cell yang bukan obstacle
 def dfs_solver(grid):
     R, C = len(grid), len(grid[0])
 
     start, finish = find_points(grid)
+
+    # Ambil titik start dan finish
     if not start or not finish:
         return None
 
+    # Arah gerak: atas, bawah. kanan, kiri
     dirs = [(1, 0), (-1, 0), (0, 1), (0, -1)]
 
+    # Mengecek apakah grid memiliki obstacle 'X', digunakan untuk optimasi fast-path
     def has_obstacle():
         for r in range(R):
             for c in range(C):
@@ -172,12 +186,17 @@ def dfs_solver(grid):
                     return True
         return False
 
+    # Memberi warna catur (0 / 1) ke cell dan dipakai untuk validasi hamiltonian path
     def color(r, c):
         return (r + c) & 1
 
     # ---------- (A) FAST PATH WHEN NO OBSTACLES ----------
+
+    # Jika tidak ada obstacle, coba langsung bangun hamiltonian path tanpa DFS
     def try_construct_full_grid_path():
         total = R * C
+
+        # Validasi parity warna start dan finish
         if total % 2 == 0:
             if color(*start) == color(*finish):
                 return None
@@ -185,6 +204,7 @@ def dfs_solver(grid):
             if color(*start) != color(*finish):
                 return None
 
+        # Membuat path zig-zag seluruh grid
         base = []
         for r in range(R):
             if r % 2 == 0:
@@ -194,6 +214,7 @@ def dfs_solver(grid):
                 for c in range(C - 1, -1, -1):
                     base.append((r, c))
 
+        # Membalik path secara horizontal/vertikal untuk mencocokkan start & finish
         def apply_transform(path, flip_h=False, flip_v=False):
             out = []
             for (r, c) in path:
@@ -204,6 +225,7 @@ def dfs_solver(grid):
                 out.append((r, c))
             return out
 
+        # Coba semua kombinasi flip
         for flip_h in (False, True):
             for flip_v in (False, True):
                 p = apply_transform(base, flip_h=flip_h, flip_v=flip_v)
@@ -214,12 +236,15 @@ def dfs_solver(grid):
 
         return None
 
+    # Kalau grid bersih, coba jalur cepat
     if not has_obstacle():
         fast = try_construct_full_grid_path()
         if fast is not None:
             return fast
 
     # ---------- (B) BACKTRACKING (PRUNING + STEP CAP) ----------
+
+    # Ambil semua cell yang harus dilewati
     target_cells = [(r, c) for r in range(R) for c in range(C) if grid[r][c] in ("0", "A")]
     need = len(target_cells)
 
@@ -230,6 +255,7 @@ def dfs_solver(grid):
     MAX_STEPS = 2_000_000
     steps = 0
 
+    # Menghitung jumlah tetangga valid yang belum dikunjungi, dipakai untuk heuristik
     def degree(r, c):
         cnt = 0
         for dr, dc in dirs:
@@ -239,6 +265,8 @@ def dfs_solver(grid):
                     cnt += 1
         return cnt
 
+    # Prunning:
+    # - Jika ada cell yang belum dikunjungi tapi tidak punya jalan keluar, maka hentikan DFS
     def dead_end_prune():
         for rr in range(R):
             for cc in range(C):
@@ -253,6 +281,10 @@ def dfs_solver(grid):
                         return True
         return False
 
+    # DFS rekursif dengan:
+    # - backtracking
+    # - prunning
+    # - batas langkah
     def dfs(r, c):
         nonlocal solution, steps
         if solution is not None:
@@ -262,6 +294,9 @@ def dfs_solver(grid):
         if steps > MAX_STEPS:
             return
 
+        # Solusi ditambahkan jika:
+        # - Sampai finish 
+        # - Semua cell sudah dilewati
         if (r, c) == finish and len(path) == need:
             solution = path[:]
             return
@@ -270,12 +305,15 @@ def dfs_solver(grid):
             return
 
         moves = []
+
+        # Kumpulkan semua langkah valid
         for dr, dc in dirs:
             nr, nc = r + dr, c + dc
             if 0 <= nr < R and 0 <= nc < C:
                 if grid[nr][nc] != "X" and (nr, nc) not in visited:
                     moves.append((degree(nr, nc), nr, nc))
 
+        # Urutkan langkah berdasarkan degree terkecil
         moves.sort()
 
         for _, nr, nc in moves:
@@ -285,6 +323,7 @@ def dfs_solver(grid):
             path.pop()
             visited.remove((nr, nc))
 
+    # Mulai DFS dari titik start
     visited.add(start)
     path.append(start)
     dfs(*start)
@@ -295,6 +334,8 @@ def dfs_solver(grid):
 # =============================
 # DRAWING
 # =============================
+
+# Digunakan untuk menggambar grid ke layar user
 def draw_grid(rows, cols, cs, grid, ox, oy):
 
     global IMG_OBSTACLE, IMG_STARTFIN
@@ -320,6 +361,8 @@ def draw_grid(rows, cols, cs, grid, ox, oy):
 # =============================
 # DRAW PATH
 # =============================
+
+# Digunakan untuk menggambar jalur solusi yang ditemukan pada grid (visualisasi)
 def draw_path(path, cs, ox, oy):
     if not path or len(path) < 2:
         return
@@ -365,6 +408,8 @@ def draw_path(path, cs, ox, oy):
 # =============================
 # ALERT IF NO SOLUTION
 # =============================
+
+# Digunakan ketika tidak ditemukan solusi, menampilkan popup alert
 def show_alert(message):
     popup_width, popup_height = 400, 200
     popup = pygame.Surface((popup_width, popup_height))
@@ -403,10 +448,23 @@ def show_alert(message):
 # =============================
 # HISTORY STATE HELPER (UNDO/REDO)
 # =============================
+
+# Membuat salinan grid 
 def copy_grid(g):
     return [row[:] for row in g]
 
+# Menyimpan kondisi (state) permainan saat ini ke dalam satu snapshot.
 
+# Snapshot berisi:
+# - grid        : salinan grid
+# - start       : posisi start
+# - finish      : posisi finish
+# - obs         : jumlah obstacle
+
+# Digunakan untuk:
+# - undo / redo
+# - reset state
+# - restore kondisi sebelumnya
 def make_snapshot(grid, start, finish, obs_count):
     return {
         "grid": copy_grid(grid),
@@ -415,7 +473,12 @@ def make_snapshot(grid, start, finish, obs_count):
         "obs": obs_count,
     }
 
-
+# Mengembalikan kondisi permainan dari snapshot.
+# Menghasilkan:
+# - grid   : grid hasil restore
+# - start  : posisi start
+# - finish : posisi finish
+# - obs    : jumlah obstacle
 def restore_snapshot(snap):
     g = copy_grid(snap["grid"])
     s = None if snap["start"] is None else (snap["start"][0], snap["start"][1])
