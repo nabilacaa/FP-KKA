@@ -1,4 +1,4 @@
-# FP-KKA
+  # FP-KKA
 
 ## CONNECT THE DOTS PUZZLE SOLVER  
 A path-finding puzzle solver built with **Python + Pygame**, implementing **uninformed search (DFS)** with a **degree heuristic** to efficiently find a single continuous path connecting two points without revisiting any cell.
@@ -66,19 +66,19 @@ Home
 
 Editable Grid
 
-<img width="2049" height="1198" alt="Screenshot 2025-12-16 151803" src="https://github.com/user-attachments/assets/2f55c27d-10ad-49db-8c53-498bdff343c4" />
+<img width="2042" height="1193" alt="Screenshot 2025-12-16 162732" src="https://github.com/user-attachments/assets/f7eab65e-d643-4fd5-a797-66571afa2bde" />
 
 Loading Screen
 
-<img width="2049" height="1199" alt="Screenshot 2025-12-16 151248" src="https://github.com/user-attachments/assets/e1c3a224-ea60-4937-a17f-5396197dd8c1" />
+<img width="2043" height="1198" alt="Screenshot 2025-12-16 162608" src="https://github.com/user-attachments/assets/a3d2df4d-c669-49de-960c-a52467217fd7" />
 
 Puzzle Solver
 
-<img width="2046" height="1199" alt="image" src="https://github.com/user-attachments/assets/e7dd3232-3113-4418-89b3-470f708bc13e" />
+<img width="2044" height="1195" alt="Screenshot 2025-12-16 162827" src="https://github.com/user-attachments/assets/c892e4c9-a58a-4319-b6eb-f86b99f05a8a" />
 
 Error Popup
 
-<img width="2048" height="1199" alt="Screenshot 2025-12-16 152041" src="https://github.com/user-attachments/assets/a1db2efb-0870-40bb-b14f-e2bbd3707b68" />
+<img width="2048" height="1196" alt="Screenshot 2025-12-16 162626" src="https://github.com/user-attachments/assets/4ba363e1-b113-4033-b464-e6081718991b" />
 
 ---
 
@@ -116,8 +116,8 @@ Enter:
 Tools available:
 
 - Home — back to start menu
-- Set Start/Finish — place two green tiles that indicates start and finish
-- Add Obstacle — place red tiles that indicates obstacle(s)
+- Set Start/Finish — place two dots tiles that indicates start and finish
+- Add Obstacle — place stone(s) that indicates obstacle(s)
 - Undo/Redo — revert or redo actions
 - Solve — run the DFS solver
 - Reset — resetting the grid to initial state
@@ -129,9 +129,9 @@ If the solver finds a valid path, it is visualized automatically.
 ## 🧩 Grid Format
 
 Grid uses:
-- Grey Square → empty
-- Red Square → obstacle
-- Green Square → start/finish
+- Plain Green Square → empty
+- Square with Stone(s) → obstacle
+- Square with Blue Dot → start/finish
 
 The solver tries to visit all Grey Square and Green Square exactly once.
 
